@@ -5,6 +5,7 @@ import pandas as pd
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from torch.utils.data import TensorDataset, DataLoader
+import joblib
 
 data = {
   "feature1": [1.2, 2.0, 3.1, 4.5, 0.5, 1.8, 2.9, 3.6, 5.1, 2.3],
@@ -75,18 +76,21 @@ for epoch in range(epochs):
            print(f"Epoch {epoch + 1 :02d}| Train msf: {epoch_train_loss:.4f}| prediction MSF: {prediction_loss.item():.4f}")
           
 
-new_sample = [[2.5, 1.8, 3.0]]
-new_sample_scaled = scalar.transform(new_sample)
-new_tensor = torch.tensor(new_sample_scaled, dtype=torch.float32)
-new_tensor = new_tensor.to(device)
-model.eval()
-with torch.no_grad():
-  raw_prediction = model(new_tensor)
-  final_prediction = raw_prediction.cpu().item()
-  print(f"input features: {new_sample[0]}")
-  print(f"predicted target values: {final_prediction:.4f}")
+torch.save(model.state_dict(), 'MLP_model.pth')
+joblib.dump(scalar, "scalar.joblib")
 
-  criterion = nn.MSELoss()
-  target = torch.tensor([[12.2]], dtype=torch.float32)
-  loss = criterion(final_prediction, target)
-  print(loss)
+# new_sample = [[2.5, 1.8, 3.0]]
+# new_sample_scaled = scalar.transform(new_sample)
+# new_tensor = torch.tensor(new_sample_scaled, dtype=torch.float32)
+# new_tensor = new_tensor.to(device)
+# model.eval()
+# with torch.no_grad():
+#   raw_prediction = model(new_tensor)
+#   final_prediction = raw_prediction.cpu().item()
+#   print(f"input features: {new_sample[0]}")
+#   print(f"predicted target values: {final_prediction:.4f}")
+
+#   criterion = nn.MSELoss()
+#   target = torch.tensor([[12.2]], dtype=torch.float32)
+#   loss = criterion(final_prediction, target)
+#   print(loss)
