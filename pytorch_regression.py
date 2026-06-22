@@ -7,14 +7,9 @@ from sklearn.model_selection import train_test_split
 from torch.utils.data import TensorDataset, DataLoader
 import joblib
 
-data = {
-  "feature1": [1.2, 2.0, 3.1, 4.5, 0.5, 1.8, 2.9, 3.6, 5.1, 2.3],
-  "feature2": [3.4, 1.0, 0.9, 2.1, 4.0, 2.2, 1.5, 0.8, 1.1, 3.0],
-  "feature3": [2.1, 0.5, 4.2, 3.0, 1.2, 2.8, 3.1, 4.9, 0.2, 1.7],
-  "target": [10.5, 5.2, 12.3, 15.1, 6.0, 9.8, 11.4, 14.2, 11.0, 8.9]
-}
+df = pd.read_csv("dataset_1000_rows.csv")
 
-df = pd.DataFrame(data)
+
 X = df[["feature1", "feature2", "feature3"]]
 y = df[["target"]]
 
@@ -30,7 +25,7 @@ y_train = torch.tensor(y_train.values, dtype=torch.float32)
 y_test = torch.tensor(y_test.values, dtype=torch.float32)
 
 train_dataset = TensorDataset(X_train, y_train)
-train_loader = DataLoader(train_dataset, batch_size=2, shuffle=True)
+train_loader = DataLoader(train_dataset, batch_size=5, shuffle=True)
 
 class MLP(nn.Module):
   def __init__(self):
@@ -49,7 +44,7 @@ class MLP(nn.Module):
 device = torch.device("cuda") if torch.cuda.is_available() else "cpu"
 model = MLP().to(device)
 criterion = nn.MSELoss()
-optimizer = optim.Adam(model.parameters(), lr=0.01)
+optimizer = optim.Adam(model.parameters(), lr=0.001)
 
 epochs = 50
 for epoch in range(epochs):
@@ -72,9 +67,9 @@ for epoch in range(epochs):
         y_test_prediction = model(X_test)
         prediction_loss = criterion(y_test_prediction, y_test)
 
-        if (epoch + 1) % 10 == 0 or epoch == 0:
-           print(f"Epoch {epoch + 1 :02d}| Train msf: {epoch_train_loss:.4f}| prediction MSF: {prediction_loss.item():.4f}")
-          
+        # if (epoch + 1) % 10 == 0 or epoch == 0:
+          #  print(f"Epoch {epoch + 1 :02d}| Train msf: {epoch_train_loss:.4f}| prediction MSF: {prediction_loss.item():.4f}")
+        
 
 torch.save(model.state_dict(), 'MLP_model.pth')
 joblib.dump(scalar, "scalar.joblib")
