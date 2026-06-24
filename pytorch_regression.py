@@ -27,18 +27,32 @@ y_test = torch.tensor(y_test.values, dtype=torch.float32)
 train_dataset = TensorDataset(X_train, y_train)
 train_loader = DataLoader(train_dataset, batch_size=5, shuffle=True)
 
+#Neural network architecture
 class MLP(nn.Module):
   def __init__(self):
     super().__init__()
-    self.network = nn.Sequential(
-      nn.Linear(3, 32),
-      nn.ReLU(),
-      nn.Linear(32, 16),
-      nn.ReLU(),
-      nn.Linear(16, 1)
-    )
+    # self.network = nn.Sequential(
+    #   nn.Linear(3, 32),
+    #   nn.ReLU(),
+    #   nn.Linear(32, 16),
+    #   nn.ReLU(),
+    #   nn.Linear(16, 1)
+      # 3 - 32 - 16 - 1
+    # )
+    self.input_layer = nn.Linear(3, 32)
+    self.relu1= nn.ReLU()
+    self.hidden_layer1 = nn.Linear(32, 16)
+    self.relu2= nn.ReLU()
+    self.output_layer = nn.Linear(16, 1)
+
   def forward(self, x):
-      return self.network(x)
+      # return self.network(x)
+      x = self.input_layer(x)
+      x = self.relu1(x)
+      x = self.hidden_layer1(x)
+      x = self.relu2(x)
+      x = self.output_layer(x)
+      return x
 
 
 device = torch.device("cuda") if torch.cuda.is_available() else "cpu"
